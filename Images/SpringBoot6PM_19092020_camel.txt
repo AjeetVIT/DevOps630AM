@@ -1,0 +1,94 @@
+			Spring Boot + Apache Camel
+			        Session-1
+				Mr. RAGHU
+		---------------------------------------
+		https://www.facebook.com/groups/thejavatemple
+Apache Camel : 
+=> It is a open source and Integration F/w used to transfer data between systems
+=> Supports different protocol, HTTP, FTP, FILE, JMS..etc
+=> Supports different languages like Hadoop, PHP, Python..etc
+=> We can trasfer data like XML, JSON, Text, ..etc
+
+*)Camel S/w supports 3 types of operations
+a) Routing  : Transfer data from source to distination
+b) Filering : Check condition before trasfer
+c) Processing : Modify/conversion,calcuations..etc(XML->JSON)
+
+*)Camel coding is done using: EIP => Enterprise Integration Pattern.
+
+*) Spring boot supports auto-configuration with Apache Camel using a starter:
+		camel-spring-boot-starter
+
+pom.xml
+<dependency>
+	<groupId>org.apache.camel.springboot</groupId>
+	<artifactId>camel-spring-boot-starter</artifactId>
+	<version>3.5.0</version>
+</dependency>
+
+===========Example#1===============================================
+#1. Create one Spring Starter Project
+Name : SpringBoot2ApacheCamelEx
+Dep  : Apache Camel
+
+#2. application.properties
+camel.springboot.main-run-controller=true
+
+#3. Router class
+package in.nareshit.raghu.router;
+
+import org.apache.camel.builder.RouteBuilder;
+import org.springframework.stereotype.Component;
+
+@Component
+public class MyDataRoute extends RouteBuilder {
+
+	@Override
+	public void configure() throws Exception {
+		from("file:F:\\source").to("file:F:\\desti");
+	}
+}
+
+#4. Run main class
+
+--Exection-
+1. Create a Folder 'source' in F drive
+2. Create a Folder 'desti' in F drive
+3. Place files in source folder, those are sent to desti folder
+4. In source folder files are exist as backup folder .camel
+
+
+--EIP Patterns---------
+#1. from("file:F:\\source").to("file:F:\\desti");
+ => It indicates sending files from F:/source folder to F:/desti folder
+ => All files are taken as backup in source as .camel folder
+ => We can send same file again with new data, that overrides at destination.
+
+#2. from("file:F:\\source?noop=true").to("file:F:\\desti");
+=> NOOP = No Operation to Override Program
+=> No backup into .camel in source folder
+=> Avoids sending duplicates 
+
+#3. from("{{my.app.source}}").to("{{my.app.desti}}");
+=> here {{my.app.source}} indicates dynamic location is taken from propreties file
+
+--application.properties--
+camel.springboot.main-run-controller=true
+my.app.source=file:F://source
+my.app.desti=file:F://desti
+
+--Router class--
+package in.nareshit.raghu.router;
+
+import org.apache.camel.builder.RouteBuilder;
+import org.springframework.stereotype.Component;
+
+@Component
+public class MyDataRoute extends RouteBuilder {
+
+	@Override
+	public void configure() throws Exception {
+		from("{{my.app.source}}").to("{{my.app.desti}}");
+	}
+}
+--------------------
